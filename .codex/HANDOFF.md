@@ -61,11 +61,10 @@ Preserve the completed general scientific plotting core and use it as the founda
 
 - Passed: Ruff, compile, 66-test Docker suite, 31 example generators (including all 11 recipe figures), visual inspection, documentation path validation, continuity audit, and route-sync audit.
 - Failed: none.
-- Not run: Git status because `.git` metadata is invalid.
+- Git: clean `main` tracking `origin/main` after the initial GitHub sync.
 
 ## Risks / Open Questions
 
-- Git status remains unavailable because `.git` metadata is invalid.
 - Swarm collision layout and broken axes are deliberately outside the core; see Decision 0003.
 - Domain recipes such as signal traces and spectrograms remain optional follow-up work.
 

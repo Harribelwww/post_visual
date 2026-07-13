@@ -50,7 +50,6 @@ Maintain `post_visual` as a Matplotlib-first, primitive-first visualization tool
 
 - The active default Python environment lacks matplotlib, so local `python -m pytest` is not useful until dependencies are installed.
 - Directly invoking a conda environment's `python.exe` by filesystem path on Windows can miss native DLL search paths. Use Docker, activated conda, or `conda run`.
-- Git commands currently fail because the workspace is not a valid git repository.
 
 ## Phase Plan
 
@@ -71,7 +70,7 @@ The general scientific plotting core and the 10 existing public recipes closed c
 - Ruff passes across `src`, `tests`, and `examples`.
 - Docker verification through `scripts/test-docker.ps1` passed with `66 passed`.
 - The Docker path generated all 31 core and recipe example figures.
-- Documentation and continuity audits are clean aside from the known invalid Git metadata.
+- Documentation and continuity audits are clean; `main` is synchronized with the GitHub origin.
 
 ## Next Step
 

@@ -45,7 +45,7 @@ The base style is derived from `sci_plot.m`: publication-style white background,
 - Workspace root: `C:\Users\HARRIBELWWW\Desktop\tmp\post_visual`
 - Current source file: `sci_plot.m`
 - Current date when skeleton was created: 2026-07-09
-- This workspace may not be a git repository.
+- Git repository: `https://github.com/Harribelwww/post_visual.git` (`main`, HTTPS).
 
 ## Next Implementation Direction
 
