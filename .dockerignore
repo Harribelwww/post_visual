@@ -1,0 +1,10 @@
+.git/
+.agents/
+.codex/
+.pytest_cache/
+*.egg-info/
+__pycache__/
+build/
+dist/
+examples/out/
+

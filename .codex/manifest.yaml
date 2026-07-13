@@ -1,0 +1,50 @@
+schema_version: 1
+repo:
+  name: post_visual
+  code_root: .
+  main_package: post_visual
+  default_task: Build a matplotlib-based data-science visualization toolkit with a fixed scientific style.
+canonical_docs:
+  bootstrap:
+    - AGENTS.md
+    - .codex/WORKSPACE.md
+    - docs/INDEX.md
+  continuity:
+    - .codex/HANDOFF.md
+    - .codex/handoffs/README.md
+    - .codex/tasks/README.md
+  routing:
+    - .codex/ROUTING.md
+  durable_docs:
+    - README.md
+    - docs/INDEX.md
+    - docs/architecture/README.md
+    - docs/architecture/toolkit-architecture.md
+    - docs/architecture/plot-catalog.md
+    - docs/setup/README.md
+    - docs/setup/temporary-docker-plotting.md
+    - docs/decisions/README.md
+    - docs/decisions/0001-initial-toolkit-scope.md
+    - docs/decisions/0002-primitives-before-recipes.md
+    - docs/decisions/0003-general-core-closure.md
+scoped_routes:
+  - scope: docs/**
+    read_first:
+      - docs/INDEX.md
+      - .codex/workflows/docs-hygiene.md
+  - scope: .codex/**
+    read_first:
+      - AGENTS.md
+      - .codex/WORKSPACE.md
+      - .codex/ROUTING.md
+  - scope: sci_plot.m
+    read_first:
+      - docs/architecture/toolkit-architecture.md
+      - docs/decisions/0001-initial-toolkit-scope.md
+short_lived_context:
+  active_context: .codex/HANDOFF.md
+  handoffs_dir: .codex/handoffs
+  task_capsules_dir: .codex/tasks
+validation_policy:
+  documentation_command: powershell -ExecutionPolicy Bypass -File .codex/workflows/validate-doc-paths.ps1
+  expensive_validation_required_for_docs: false

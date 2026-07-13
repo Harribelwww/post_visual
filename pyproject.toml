@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "post_visual"
+version = "0.1.0"
+description = "Matplotlib-first scientific visualization helpers for data-science research results."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "post_visual contributors" }
+]
+dependencies = [
+  "numpy",
+  "pandas",
+  "scipy",
+  "matplotlib",
+  "seaborn",
+  "scikit-learn"
+]
+
+[project.optional-dependencies]
+signal = ["mne"]
+image = ["scikit-image", "nibabel", "pydicom"]
+explain = ["captum", "shap"]
+embedding = ["umap-learn"]
+dev = ["pytest", "pytest-mpl", "ruff"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra"
+
