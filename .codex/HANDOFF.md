@@ -5,8 +5,8 @@ Status: active
 
 ## Current Goal
 
-Publish the complete native WSL runtime and visualization-toolkit worktree to GitHub over
-the configured SSH remote.
+Review and merge the published native WSL runtime and visualization-toolkit branch into
+`main`.
 
 ## Scope
 
@@ -40,7 +40,8 @@ the configured SSH remote.
   from Windows.
 - Git `origin` is `git@github.com:Harribelwww/post_visual.git`; local `main` tracks
   `origin/main`, and fetch plus push dry-run succeed through the SSH key.
-- The worktree remains intentionally dirty with pre-existing completed implementation plus this runtime migration.
+- The complete implementation and migration were committed as `b3b75ac` and published to
+  `origin/agent/wsl-native-migration` through SSH.
 
 ## Required Reading
 
@@ -97,6 +98,9 @@ remains for historical provenance and is not an active route.
 - 2026-07-15 pre-publish verification: `scripts/test-wsl.sh` and
   `scripts/test-latex-wsl.sh` both passed again; 45 example/gallery images and 2 doctor
   artifacts were counted and then removed with all generated caches before staging.
+- `b3b75ac Add native WSL runtime and rendering support`: committed 69 reviewed files.
+- `git push -u origin agent/wsl-native-migration`: published successfully through SSH and
+  configured upstream tracking.
 
 ## Environment Snapshot
 
@@ -127,7 +131,7 @@ The durable TeX snapshot is:
 
 ## Risks / Open Questions
 
-- The complete implementation and migration are still uncommitted.
+- The publication branch is not yet merged into `main`.
 - TeX and conda updates must remain explicit; routine tests must not update either environment.
 - Generated test/example artifacts are intentionally ignored and removed after verification.
 - micromamba's extracted shared package store remains because it backs the installed
@@ -135,6 +139,6 @@ The durable TeX snapshot is:
 
 ## Next Steps
 
-1. Commit and push the complete worktree on `agent/wsl-native-migration` through SSH.
-2. Review and merge the published branch into `main` when ready.
+1. Review and merge `agent/wsl-native-migration` into `main` when ready.
+2. Update local `main` after the merge.
 3. Resume feature work only after the migration changes are safely integrated.
