@@ -15,7 +15,8 @@ data-science research results with a consistent scientific style.
 - TeX Live 2026 lives under `/home/harribelwww/tex_env/texlive/2026` and is reached through `/home/harribelwww/tex_env/current`.
 - Ordinary native verification passes with 80 tests and 2 expected external-LaTeX skips.
 - Real external-LaTeX verification passes with 2 tests, doctor PNG/PDF renders, and 13 gallery PNGs.
-- The worktree remains intentionally dirty with the completed plotting, rendering, and runtime migration changes.
+- The completed plotting, rendering, and runtime migration changes are published on
+  `main`; the local branch tracks and is synchronized with `origin/main` over SSH.
 
 ## Design Direction
 
@@ -36,7 +37,7 @@ PGF remains excluded.
 - `docs/setup/wsl-native-runtime.md`: environment bootstrap, locking, TeX, and verification.
 - `docs/setup/wsl-migration.md`: completed migration record.
 - `docs/decisions/0005-native-wsl-micromamba-texlive.md`: current runtime decision.
-- `.codex/HANDOFF.md`: active working context.
+- `.codex/HANDOFF.md`: standby continuation entry point; read it when resuming prior work.
 
 ## Environment Notes
 
@@ -50,6 +51,7 @@ PGF remains excluded.
 
 ## Next Implementation Direction
 
-1. Commit or otherwise publish the complete dirty worktree now that WSL verification is restored.
-2. Add domain recipes or visual-regression baselines only when requested.
-3. Treat dependency and TeX updates as explicit maintenance with full re-verification.
+1. Add domain recipes or visual-regression baselines only when requested.
+2. Treat dependency and TeX updates as explicit maintenance with full re-verification.
+3. Start future work from synchronized `main` and activate a task capsule only for
+   genuinely multi-session work.

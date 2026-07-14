@@ -2,7 +2,8 @@
 
 Date: 2026-07-14
 
-Status: accepted; supersedes Decision 0004.
+Status: accepted and implemented; supersedes Decision 0004. Implementation and migration
+acceptance were formally closed on 2026-07-15.
 
 ## Decision
 

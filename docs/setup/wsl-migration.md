@@ -1,6 +1,6 @@
 # WSL Migration Record
 
-Status: completed on 2026-07-14.
+Status: completed on 2026-07-14; verified, published, and formally closed on 2026-07-15.
 
 `post_visual` now lives at `/home/harribelwww/workspace/post_visual` in the WSL Linux
 filesystem. The supported runtime is native WSL: micromamba manages the project Python
@@ -30,6 +30,15 @@ See the [native WSL runtime guide](wsl-native-runtime.md) for operational comman
 - Two real external-LaTeX tests and all 13 gallery images passed.
 - Real PNG and PDF doctor renders succeeded.
 - Representative LaTeX outputs passed visual inspection.
+- The migration-era Windows repository copy was checksum-compared, confirmed to contain
+  no newer unique code, and deleted from Windows.
+- Legacy Docker and PowerShell runtime assets were removed from active repository paths;
+  retained references are historical documentation only.
+- The native Bash entry points are committed with executable permissions.
+- The complete migration was committed, fast-forwarded into `main`, and pushed to
+  `origin/main` using SSH key authentication without force-pushing.
+- The local `main` worktree was clean and synchronized with `origin/main` at formal
+  closure.
 
 Decision 0005 supersedes the former Docker-only runtime decision. Historical Docker
 digests and results remain in Decision 0004 for traceability, but no active setup path

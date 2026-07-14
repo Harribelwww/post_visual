@@ -1,5 +1,7 @@
 # Task Capsule: post_visual toolkit
 
+Status: complete as of 2026-07-15.
+
 ## Goal
 
 Maintain `post_visual` as a Matplotlib-first, primitive-first visualization toolkit with
@@ -61,5 +63,5 @@ a completed general core, thin research recipes, and a reproducible native WSL r
 
 ## Next Step
 
-Publish the complete dirty worktree after reviewing the final diff, then resume feature
-work only on explicit request.
+No migration or publication step remains. Start a new task capsule, or reactivate this
+one with a clearly scoped phase, only when new multi-session feature work is requested.

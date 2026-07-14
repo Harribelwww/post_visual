@@ -4,7 +4,7 @@
 
 - [Project landing page](../README.md)
 - [Workspace overview](../.codex/WORKSPACE.md)
-- [Active working context](../.codex/HANDOFF.md)
+- [Standby continuation context](../.codex/HANDOFF.md)
 
 ## Architecture
 
