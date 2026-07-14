@@ -1,12 +1,12 @@
 # Working Context
 
 Last updated: 2026-07-15
-Status: active
+Status: standby
 
 ## Current Goal
 
-Review and merge the published native WSL runtime and visualization-toolkit branch into
-`main`.
+Maintain the native WSL visualization toolkit after the completed migration and GitHub
+publication.
 
 ## Scope
 
@@ -42,6 +42,8 @@ Review and merge the published native WSL runtime and visualization-toolkit bran
   `origin/main`, and fetch plus push dry-run succeed through the SSH key.
 - The complete implementation and migration were committed as `b3b75ac` and published to
   `origin/agent/wsl-native-migration` through SSH.
+- `main` was fast-forwarded through `bff864d` and pushed to `origin/main` through SSH; the
+  migration and visualization changes are now the canonical main-branch state.
 
 ## Required Reading
 
@@ -101,6 +103,8 @@ remains for historical provenance and is not an active route.
 - `b3b75ac Add native WSL runtime and rendering support`: committed 69 reviewed files.
 - `git push -u origin agent/wsl-native-migration`: published successfully through SSH and
   configured upstream tracking.
+- `git merge --ff-only agent/wsl-native-migration` followed by `git push origin main`:
+  integrated and published the complete branch without force-pushing.
 
 ## Environment Snapshot
 
@@ -131,7 +135,6 @@ The durable TeX snapshot is:
 
 ## Risks / Open Questions
 
-- The publication branch is not yet merged into `main`.
 - TeX and conda updates must remain explicit; routine tests must not update either environment.
 - Generated test/example artifacts are intentionally ignored and removed after verification.
 - micromamba's extracted shared package store remains because it backs the installed
@@ -139,6 +142,6 @@ The durable TeX snapshot is:
 
 ## Next Steps
 
-1. Review and merge `agent/wsl-native-migration` into `main` when ready.
-2. Update local `main` after the merge.
-3. Resume feature work only after the migration changes are safely integrated.
+1. Start future feature work from the current synchronized `main`.
+2. Treat dependency or TeX changes as explicit maintenance with full verification.
+3. Update this handoff only when new cross-session work becomes active.
