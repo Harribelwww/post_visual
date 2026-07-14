@@ -89,3 +89,35 @@ def test_line_nan_policy_supports_gaps_omit_and_raise() -> None:
 
     with pytest.raises(ValueError, match="non-finite"):
         pv.line([0, 1], [1, np.nan], nan_policy="raise")
+
+
+def test_line_nan_policy_aligns_confidence_band() -> None:
+    x = np.array([0.0, 1.0, 2.0])
+    y = np.array([1.0, np.nan, 3.0])
+    lower = np.array([0.8, 1.8, 2.8])
+    upper = np.array([1.2, 2.2, 3.2])
+
+    fig, ax = pv.line(x, y, lower=lower, upper=upper, nan_policy="omit")
+    assert ax.lines[0].get_xdata().tolist() == [0.0, 2.0]
+    assert len(ax.collections) == 1
+    plt.close(fig)
+
+    fig, ax = pv.line(x, y, lower=lower, upper=upper, nan_policy="gap")
+    assert np.isnan(ax.lines[0].get_ydata()[1])
+    assert len(ax.collections[0].get_paths()) == 2
+    plt.close(fig)
+
+
+def test_line_rejects_empty_marker_cycle_and_allows_band_color_override() -> None:
+    with pytest.raises(ValueError, match="markers"):
+        pv.line([0, 1], [1, 2], markers=[])
+
+    fig, ax = pv.line(
+        [0, 1],
+        [1, 2],
+        lower=[0.8, 1.8],
+        upper=[1.2, 2.2],
+        band_kws={"color": "red"},
+    )
+    assert np.allclose(ax.collections[0].get_facecolor()[0, :3], [1.0, 0.0, 0.0])
+    plt.close(fig)

@@ -32,7 +32,7 @@ def style_axes(
     if grid:
         ax.grid(True, which="major", linestyle="--", alpha=0.15, color="black")
 
-    ax.set_axisbelow(False)
+    ax.set_axisbelow("line")
     return ax
 
 

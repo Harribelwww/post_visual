@@ -76,122 +76,6 @@ def confusion_matrix(
     return heatmap(values, **kwargs)
 
 
-def roc_curve(
-    y_true: Any,
-    y_score: Any,
-    *,
-    labels: Sequence[str] | None = None,
-    pos_label: Any | None = None,
-    baseline: bool = True,
-    palette: str | int | Sequence[RGB] = "furina",
-    ax: Axes | None = None,
-    title: str | None = "ROC Curve",
-    xlabel: str = "False Positive Rate",
-    ylabel: str = "True Positive Rate",
-    legend: bool | None = True,
-    figsize_cm: tuple[float, float] = DEFAULT_FIGSIZE_CM,
-    style: bool = True,
-    usetex: bool = False,
-    line_kws: Mapping[str, Any] | None = None,
-    baseline_kws: Mapping[str, Any] | None = None,
-    legend_kws: Mapping[str, Any] | None = None,
-) -> tuple[Figure, Axes]:
-    """Plot one or more binary ROC curves."""
-
-    curves = []
-    for label, scores in _iter_score_series(y_score, labels=labels):
-        fpr, tpr, _ = _roc_points(y_true=y_true, y_score=scores, pos_label=pos_label)
-        score = _auc(fpr, tpr)
-        curves.append((fpr, tpr, f"{label} (AUROC={score:.3f})"))
-
-    fig, plot_ax = line(
-        series=curves,
-        palette=palette,
-        ax=ax,
-        title=title,
-        xlabel=xlabel,
-        ylabel=ylabel,
-        legend=legend,
-        figsize_cm=figsize_cm,
-        style=style,
-        usetex=usetex,
-        line_kws=line_kws,
-        legend_kws=legend_kws,
-    )
-    plot_ax.set_xlim(0, 1)
-    plot_ax.set_ylim(0, 1)
-
-    if baseline:
-        kwargs = {"color": "0.35", "linestyle": "--", "linewidth": 1.0, "label": "Chance"}
-        if baseline_kws:
-            kwargs.update(baseline_kws)
-        plot_ax.plot([0, 1], [0, 1], **kwargs)
-        if legend is not False:
-            plot_ax.legend(**({"loc": "best", "frameon": True, "fontsize": 13} | dict(legend_kws or {})))
-    return fig, plot_ax
-
-
-def pr_curve(
-    y_true: Any,
-    y_score: Any,
-    *,
-    labels: Sequence[str] | None = None,
-    pos_label: Any | None = None,
-    baseline: bool = True,
-    palette: str | int | Sequence[RGB] = "furina",
-    ax: Axes | None = None,
-    title: str | None = "Precision-Recall Curve",
-    xlabel: str = "Recall",
-    ylabel: str = "Precision",
-    legend: bool | None = True,
-    figsize_cm: tuple[float, float] = DEFAULT_FIGSIZE_CM,
-    style: bool = True,
-    usetex: bool = False,
-    line_kws: Mapping[str, Any] | None = None,
-    baseline_kws: Mapping[str, Any] | None = None,
-    legend_kws: Mapping[str, Any] | None = None,
-) -> tuple[Figure, Axes]:
-    """Plot one or more binary precision-recall curves."""
-
-    curves = []
-    for label, scores in _iter_score_series(y_score, labels=labels):
-        precision, recall, _ = _pr_points(y_true=y_true, y_score=scores, pos_label=pos_label)
-        score = _average_precision(precision=precision, recall=recall)
-        curves.append((recall, precision, f"{label} (AUPRC={score:.3f})"))
-
-    fig, plot_ax = line(
-        series=curves,
-        palette=palette,
-        ax=ax,
-        title=title,
-        xlabel=xlabel,
-        ylabel=ylabel,
-        legend=legend,
-        figsize_cm=figsize_cm,
-        style=style,
-        usetex=usetex,
-        line_kws=line_kws,
-        legend_kws=legend_kws,
-    )
-    plot_ax.set_xlim(0, 1)
-    plot_ax.set_ylim(0, 1)
-
-    if baseline:
-        prevalence = _positive_prevalence(y_true=y_true, pos_label=pos_label)
-        kwargs = {
-            "color": "0.35",
-            "linestyle": "--",
-            "linewidth": 1.0,
-            "label": f"Prevalence={prevalence:.3f}",
-        }
-        if baseline_kws:
-            kwargs.update(baseline_kws)
-        plot_ax.axhline(prevalence, **kwargs)
-        if legend is not False:
-            plot_ax.legend(**({"loc": "best", "frameon": True, "fontsize": 13} | dict(legend_kws or {})))
-    return fig, plot_ax
-
-
 def calibration_curve(
     y_true: Any,
     y_prob: Any,
@@ -249,7 +133,7 @@ def calibration_curve(
     plot_ax.set_xlim(0, 1)
     plot_ax.set_ylim(0, 1)
     if legend is not False:
-        plot_ax.legend(**({"loc": "best", "frameon": True, "fontsize": 11} | dict(legend_kws or {})))
+        plot_ax.legend(**({"loc": "best", "frameon": True, "fontsize": 9} | dict(legend_kws or {})))
     return fig, plot_ax
 
 
@@ -326,12 +210,6 @@ def _iter_score_series(
             for index in range(scores.shape[1])
         ]
     raise ValueError("y_score must be one-dimensional, two-dimensional, or a mapping.")
-
-
-def _positive_prevalence(*, y_true: Any, pos_label: Any | None) -> float:
-    y_array = np.ravel(np.asarray(y_true))
-    positive = pos_label if pos_label is not None else 1
-    return float(np.mean(y_array == positive))
 
 
 def _calibration_points(
@@ -411,76 +289,3 @@ def _unique_in_order(*arrays: np.ndarray) -> list[Any]:
             seen.add(value)
             result.append(value)
     return result
-
-
-def _roc_points(
-    *,
-    y_true: Any,
-    y_score: Any,
-    pos_label: Any | None,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    fps, tps, thresholds = _binary_clf_curve(
-        y_true=y_true,
-        y_score=y_score,
-        pos_label=pos_label,
-    )
-    if fps[-1] <= 0 or tps[-1] <= 0:
-        raise ValueError("ROC curve requires at least one positive and one negative sample.")
-
-    fpr = np.r_[0.0, fps / fps[-1]]
-    tpr = np.r_[0.0, tps / tps[-1]]
-    return fpr, tpr, np.r_[np.inf, thresholds]
-
-
-def _pr_points(
-    *,
-    y_true: Any,
-    y_score: Any,
-    pos_label: Any | None,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    fps, tps, thresholds = _binary_clf_curve(
-        y_true=y_true,
-        y_score=y_score,
-        pos_label=pos_label,
-    )
-    if tps[-1] <= 0:
-        raise ValueError("Precision-recall curve requires at least one positive sample.")
-
-    precision = np.divide(tps, tps + fps, out=np.ones_like(tps, dtype=float), where=(tps + fps) != 0)
-    recall = tps / tps[-1]
-    return np.r_[1.0, precision], np.r_[0.0, recall], thresholds
-
-
-def _binary_clf_curve(
-    *,
-    y_true: Any,
-    y_score: Any,
-    pos_label: Any | None,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    true_array = np.ravel(np.asarray(y_true))
-    score_array = np.ravel(np.asarray(y_score, dtype=float))
-    if true_array.size != score_array.size:
-        raise ValueError("y_true and y_score must have the same length.")
-    if true_array.size == 0:
-        raise ValueError("y_true and y_score must contain at least one item.")
-
-    positive = pos_label if pos_label is not None else 1
-    true_binary = true_array == positive
-    order = np.argsort(score_array, kind="mergesort")[::-1]
-    sorted_scores = score_array[order]
-    sorted_true = true_binary[order]
-
-    distinct_indices = np.where(np.diff(sorted_scores))[0]
-    threshold_indices = np.r_[distinct_indices, sorted_true.size - 1]
-    tps = np.cumsum(sorted_true, dtype=float)[threshold_indices]
-    fps = 1 + threshold_indices - tps
-    thresholds = sorted_scores[threshold_indices]
-    return fps, tps, thresholds
-
-
-def _auc(x: np.ndarray, y: np.ndarray) -> float:
-    return float(np.sum((x[1:] - x[:-1]) * (y[1:] + y[:-1]) / 2))
-
-
-def _average_precision(*, precision: np.ndarray, recall: np.ndarray) -> float:
-    return float(np.sum(np.diff(recall) * precision[1:]))

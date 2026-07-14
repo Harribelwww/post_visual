@@ -330,20 +330,26 @@ def _draw_hist(
         base_hist_kws.update(hist_kws)
 
     if stacked and len(groups) > 1:
+        draw_kws = {
+            "label": [group.label for group in groups],
+            "color": colors,
+            "stacked": True,
+            **base_hist_kws,
+        }
         plot_ax.hist(
             [group.values for group in groups],
-            label=[group.label for group in groups],
-            color=colors,
-            stacked=True,
-            **base_hist_kws,
+            **draw_kws,
         )
     else:
         for index, group in enumerate(groups):
+            draw_kws = {
+                "label": group.label,
+                "color": colors[index],
+                **base_hist_kws,
+            }
             plot_ax.hist(
                 group.values,
-                label=group.label,
-                color=colors[index],
-                **base_hist_kws,
+                **draw_kws,
             )
 
     if title:
@@ -702,7 +708,7 @@ def _maybe_add_legend(
     if not handles:
         return
 
-    kwargs = {"loc": "best", "frameon": True, "fontsize": 13}
+    kwargs = {"loc": "best", "frameon": True, "fontsize": 9}
     if legend_kws:
         kwargs.update(legend_kws)
     legend_obj = ax.legend(handles, labels, **kwargs)

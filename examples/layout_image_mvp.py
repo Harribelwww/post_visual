@@ -12,7 +12,14 @@ import post_visual as pv
 def main() -> list[Path]:
     output_dir = Path(__file__).parent / "out"
     x = np.linspace(0, 2 * np.pi, 80)
-    fig, axes = pv.panel_grid(2, 2, n_panels=3, labels=True, suptitle="Multi-panel Layout MVP")
+    fig, axes = pv.panel_grid(
+        1,
+        3,
+        n_panels=3,
+        labels=True,
+        suptitle="Multi-panel Layout MVP",
+        panel_size_cm=(5.5, 5.0),
+    )
     pv.line(x, np.sin(x), ax=axes[0, 0], title="Signal A", xlabel="Time", ylabel="Value")
     pv.scatter(x[::4], np.cos(x[::4]), ax=axes[0, 1], title="Signal B", xlabel="Time")
     pv.interval_band(
@@ -20,7 +27,7 @@ def main() -> list[Path]:
         np.sin(x) - 0.15,
         np.sin(x) + 0.15,
         center=np.sin(x),
-        ax=axes[1, 0],
+        ax=axes[0, 2],
         title="Signal C",
         xlabel="Time",
     )

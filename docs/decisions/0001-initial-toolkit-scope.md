@@ -13,7 +13,6 @@ The toolkit should cover mainstream plots and research-result recipes before add
 The local paper set is centered on EEG, medical diagnosis, biosignals, and neural-network methods, but most result figures are standard data-science outputs:
 
 - model performance comparisons
-- ROC/AUROC curves
 - confusion matrices
 - training curves
 - ablation and hyperparameter curves

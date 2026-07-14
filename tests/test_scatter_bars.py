@@ -149,3 +149,30 @@ def test_scatter_nan_policy_omits_or_raises() -> None:
 
     with pytest.raises(ValueError, match="non-finite"):
         pv.scatter([0, 1], [1, np.nan], nan_policy="raise")
+
+
+def test_scatter_dataframe_hue_slices_size_and_accepts_style_overrides() -> None:
+    pd = pytest.importorskip("pandas")
+    frame = pd.DataFrame(
+        {"x": [0, 1, 2, 3], "y": [1, 2, 3, 4], "group": ["A", "B", "A", "B"]}
+    )
+
+    fig, ax = pv.scatter(
+        data=frame,
+        x="x",
+        y="y",
+        hue="group",
+        size=[10, 20, 30, 40],
+        scatter_kws={"facecolors": "red"},
+    )
+
+    assert ax.collections[0].get_sizes().tolist() == [10, 30]
+    assert ax.collections[1].get_sizes().tolist() == [20, 40]
+    assert np.allclose(ax.collections[0].get_facecolor()[0, :3], [1.0, 0.0, 0.0])
+    plt.close(fig)
+
+
+def test_grouped_bar_allows_color_override_without_keyword_collision() -> None:
+    fig, ax = pv.grouped_bar(values=[1, 2], bar_kws={"color": "red"})
+    assert np.allclose(ax.patches[0].get_facecolor()[:3], [1.0, 0.0, 0.0])
+    plt.close(fig)

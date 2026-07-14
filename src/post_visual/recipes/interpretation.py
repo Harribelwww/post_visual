@@ -198,7 +198,7 @@ def _draw_embedding(
     plot_ax.set_ylabel(ylabel)
     show_legend = legend if legend is not None else labels is not None
     if show_legend:
-        kwargs = {"loc": "best", "frameon": True, "fontsize": 11}
+        kwargs = {"loc": "best", "frameon": True, "fontsize": 9}
         kwargs.update(legend_kws or {})
         plot_ax.legend(**kwargs)
     return fig, plot_ax

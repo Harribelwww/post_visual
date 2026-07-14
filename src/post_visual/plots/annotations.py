@@ -304,12 +304,13 @@ def _draw_event_lines(
 
     for position, label, color in zip(positions, labels, resolved_colors):
         artist_label = label if legend and label is not None else None
+        draw_kws = {"color": color, "label": artist_label, **line_options}
         if orientation == "vertical":
-            plot_ax.axvline(position, color=color, label=artist_label, **line_options)
+            plot_ax.axvline(position, **draw_kws)
             if annotate and label is not None:
                 plot_ax.text(position, 0.98, label, transform=plot_ax.get_xaxis_transform(), **base_text_kws)
         else:
-            plot_ax.axhline(position, color=color, label=artist_label, **line_options)
+            plot_ax.axhline(position, **draw_kws)
             if annotate and label is not None:
                 plot_ax.text(0.98, position, label, transform=plot_ax.get_yaxis_transform(), **base_text_kws)
     _maybe_add_legend(plot_ax, show=legend, legend_kws=legend_kws)
@@ -343,12 +344,13 @@ def _draw_event_spans(
         start, end = bounds
         midpoint = (start + end) / 2
         artist_label = label if legend and label is not None else None
+        draw_kws = {"color": color, "label": artist_label, **span_options}
         if orientation == "vertical":
-            plot_ax.axvspan(start, end, color=color, label=artist_label, **span_options)
+            plot_ax.axvspan(start, end, **draw_kws)
             if annotate and label is not None:
                 plot_ax.text(midpoint, 0.98, label, transform=plot_ax.get_xaxis_transform(), **base_text_kws)
         else:
-            plot_ax.axhspan(start, end, color=color, label=artist_label, **span_options)
+            plot_ax.axhspan(start, end, **draw_kws)
             if annotate and label is not None:
                 plot_ax.text(0.98, midpoint, label, transform=plot_ax.get_yaxis_transform(), **base_text_kws)
     _maybe_add_legend(plot_ax, show=legend, legend_kws=legend_kws)
@@ -460,7 +462,7 @@ def _maybe_add_legend(
     handles, labels = ax.get_legend_handles_labels()
     if not handles:
         return
-    kwargs = {"loc": "best", "frameon": True, "fontsize": 11}
+    kwargs = {"loc": "best", "frameon": True, "fontsize": 9}
     kwargs.update(legend_kws or {})
     legend_obj = ax.legend(handles, labels, **kwargs)
     legend_obj.get_frame().set_edgecolor("black")

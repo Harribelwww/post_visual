@@ -22,11 +22,15 @@ canonical_docs:
     - docs/architecture/toolkit-architecture.md
     - docs/architecture/plot-catalog.md
     - docs/setup/README.md
-    - docs/setup/temporary-docker-plotting.md
+    - docs/setup/wsl-native-runtime.md
+    - docs/setup/wsl-migration.md
+    - docs/setup/latex-test-environment.md
     - docs/decisions/README.md
     - docs/decisions/0001-initial-toolkit-scope.md
     - docs/decisions/0002-primitives-before-recipes.md
     - docs/decisions/0003-general-core-closure.md
+    - docs/decisions/0004-docker-only-runtime-and-texlive.md
+    - docs/decisions/0005-native-wsl-micromamba-texlive.md
 scoped_routes:
   - scope: docs/**
     read_first:
@@ -46,5 +50,5 @@ short_lived_context:
   handoffs_dir: .codex/handoffs
   task_capsules_dir: .codex/tasks
 validation_policy:
-  documentation_command: powershell -ExecutionPolicy Bypass -File .codex/workflows/validate-doc-paths.ps1
+  documentation_command: bash .codex/workflows/validate-doc-paths.sh
   expensive_validation_required_for_docs: false

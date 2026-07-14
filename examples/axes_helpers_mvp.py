@@ -22,9 +22,12 @@ def main() -> list[Path]:
     )
 
     pv.line(x, np.exp(5 * x), label="Growth", ax=axes[0, 1], title="Inset detail", xlabel="Time", ylabel="Response")
-    _, inset = pv.inset_axes(axes[0, 1], [0.12, 0.52, 0.4, 0.36])
+    _, inset = pv.inset_axes(axes[0, 1], [0.12, 0.36, 0.4, 0.32])
     pv.line(x[:12], np.exp(5 * x[:12]), ax=inset, style=False, marker=None, line_kws={"linewidth": 1.0})
-    inset.set_title("Early", fontsize=8)
+    inset.set_title("Early", fontsize=7, pad=2)
+    inset.tick_params(labelsize=6)
+    inset.tick_params(labelsize=6)
+    inset.tick_params(labelsize=6)
     pv.shared_legend(axes, legend_kws={"loc": "outside lower center", "ncol": 2})
     path = pv.save_figure(fig, output_dir / "axes_helpers_mvp.png")
     return [path]

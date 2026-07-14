@@ -1,0 +1,6 @@
+[latex]
+engine = "mathtext"
+preamble = []
+strict = true
+allow_fallback = false
+mathtext_fontset = "stix"

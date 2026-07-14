@@ -1,6 +1,6 @@
 # Plot Catalog
 
-This catalog records the figure types `post_visual` should support. It is based on common data-science practice and the result figures observed in the local PDF paper set under `C:\Users\HARRIBELWWW\Desktop\焚诀`.
+This catalog records the figure types `post_visual` should support. It is based on common data-science practice and the research-paper figure set reviewed during the initial design.
 
 Concept diagrams, model architecture cartoons, and workflow schematics are intentionally excluded from the core plotting target.
 
@@ -22,8 +22,6 @@ Concept diagrams, model architecture cartoons, and workflow schematics are inten
 ## Research-Result Recipes
 
 - Training curves: loss, accuracy, learning rate, and convergence comparison.
-- ROC and AUROC curves.
-- Precision-recall curves.
 - Calibration and reliability plots.
 - Confusion matrices, including normalized and unnormalized modes.
 - Model comparison tables rendered as bars or point-range plots.

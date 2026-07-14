@@ -27,48 +27,6 @@ def test_confusion_matrix_computes_and_plots_labels() -> None:
     plt.close(fig)
 
 
-def test_roc_and_pr_curves_add_metric_labels_and_baselines() -> None:
-    y_true = np.array([0, 0, 1, 1])
-    y_score = np.array([0.1, 0.4, 0.35, 0.8])
-
-    fig, ax = pv.roc_curve(y_true, y_score, labels=["Demo"])
-
-    assert len(ax.lines) == 2
-    assert ax.get_xlim() == (0.0, 1.0)
-    assert ax.get_ylim() == (0.0, 1.0)
-    assert "AUROC" in ax.get_legend().get_texts()[0].get_text()
-    plt.close(fig)
-
-    fig, ax = pv.pr_curve(y_true, y_score, labels=["Demo"])
-
-    assert len(ax.lines) == 2
-    assert ax.get_xlim() == (0.0, 1.0)
-    assert ax.get_ylim() == (0.0, 1.0)
-    legend_labels = [text.get_text() for text in ax.get_legend().get_texts()]
-    assert any("AUPRC" in label for label in legend_labels)
-    assert any("Prevalence" in label for label in legend_labels)
-    plt.close(fig)
-
-
-def test_roc_curve_accepts_multiple_score_columns() -> None:
-    y_true = np.array([0, 0, 1, 1, 1])
-    scores = np.array(
-        [
-            [0.1, 0.2],
-            [0.3, 0.4],
-            [0.7, 0.6],
-            [0.8, 0.9],
-            [0.6, 0.7],
-        ]
-    )
-
-    fig, ax = pv.roc_curve(y_true, scores, labels=["A", "B"], baseline=False)
-
-    assert len(ax.lines) == 2
-    assert [line.get_label().split()[0] for line in ax.lines] == ["A", "B"]
-    plt.close(fig)
-
-
 def test_training_curves_accepts_dataframe_history() -> None:
     pd = pytest.importorskip("pandas")
     history = pd.DataFrame(

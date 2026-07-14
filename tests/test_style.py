@@ -28,3 +28,11 @@ def test_style_context_is_scoped() -> None:
 
     assert mpl.rcParams["text.usetex"] == before
 
+
+def test_scientific_style_uses_readable_visual_hierarchy() -> None:
+    rc = pv.scientific_rc()
+
+    assert rc["font.weight"] == "normal"
+    assert rc["axes.labelweight"] == "normal"
+    assert rc["axes.axisbelow"] == "line"
+    assert rc["legend.fontsize"] < rc["axes.titlesize"]

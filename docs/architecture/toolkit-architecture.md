@@ -45,7 +45,7 @@ post_visual/
 ```text
 style template   -> palette, fonts, mathtext, axes, legend, grid, export
 figure template  -> single-panel, multi-panel, paper, slide, square
-plot recipe      -> ROC, confusion matrix, training curve, ablation, etc.
+plot recipe      -> confusion matrix, training curve, ablation, etc.
 local override   -> labels, data grouping, colors, markers, ax, annotations
 ```
 
@@ -67,6 +67,11 @@ src/post_visual/
     axes.py
     layout.py
     export.py
+  rendering/
+    __init__.py
+    latex.py
+    diagnostics.py
+    hybrid.py
   plots/
     __init__.py
     line.py
@@ -102,15 +107,62 @@ The current package implements the plotting foundation:
 - `plots/distributions.py`: histograms, KDE, ECDF, box, violin, and jittered raw-sample strips.
 - `plots/matrix.py`: `pv.heatmap` for categorical matrices and `pv.grid_color` for continuous-coordinate regular grids.
 - `plots/image.py`: grayscale/RGB(A) images and image grids with shared or per-image colorbars.
-- `recipes/metrics.py`: `pv.confusion_matrix`, `pv.roc_curve`, and `pv.pr_curve`.
+- `recipes/metrics.py`: `pv.confusion_matrix` and `pv.calibration_curve`.
 - `recipes/training.py`: `pv.training_curves` for dict and DataFrame training histories.
 - `recipes/comparison.py`: `pv.model_comparison` and `pv.ablation` for cross-dataset comparisons and component studies.
-- `recipes/metrics.py`: also provides `pv.calibration_curve` with reliability bins and ECE labels.
 - `recipes/interpretation.py`: `pv.embedding` and `pv.feature_importance` with NumPy-only PCA and precomputed-coordinate support.
 - `recipes/signal.py`: `pv.connectivity_matrix` for symmetric, directed, triangular, and zero-centered difference matrices.
 
-All high-level plotting functions accept `ax` and return `(fig, ax)`.
-Build-stage verification is Docker-first through `scripts/test-docker.ps1`.
+All high-level plotting functions accept `ax` and return `(fig, ax)`. The supported
+runtime is native WSL2: an isolated micromamba Python 3.12 environment provides the
+scientific stack, and a user-owned TeX Live 2026 tree provides optional external LaTeX.
+Docker and Windows Python are unsupported. See `docs/setup/wsl-native-runtime.md`.
+
+## Rendering And Export Layer
+
+`post_visual` supports PNG and PDF export. PGF output is deliberately out of scope. The
+default text engine is Matplotlib MathText, so ordinary verification does not require
+TeX Live; external LaTeX through `usetex` is an explicit optional native integration.
+
+The implemented public surface is:
+
+```python
+with pv.latex_context("mathtext"):
+    ...
+
+with pv.latex_context("usetex", preamble=..., strict=True):
+    ...
+
+pv.save_figure(
+    fig,
+    path,
+    pdf_mode="vector",  # or "hybrid"
+    raster_dpi=300,
+    hybrid_kws={"scatter_threshold": 5000, "mesh_threshold": 10000},
+)
+```
+
+PDF has two modes:
+
+- `vector`: preserve the complete Matplotlib figure as vector content where the backend supports it.
+- `hybrid`: preserve axes, spines, ticks, text, formulas, legends, lines, error bars, annotations, and ordinary bars as vector content while rasterizing only high-density artists such as large `PathCollection`, `QuadMesh`, and complex filled contours.
+
+Hybrid export should make per-artist decisions instead of using a broad z-order cutoff. Export must temporarily change artist rasterization state, save the figure, and restore the original state even when saving fails. Thresholds and raster DPI remain configurable so users can trade file size against detail.
+
+External LaTeX availability is checked against the versioned user-owned TeX Live tree
+under `/home/harribelwww/tex_env`. The public interfaces are `post-visual configure`,
+`post-visual doctor --latex`, and a Python `latex_diagnostics()` API.
+Diagnostics check executable discovery and versions for `latex` and `dvipng`, then perform
+real PNG and PDF smoke renders. Requested `usetex` mode fails with an actionable diagnostic
+when unavailable; it does not silently fall back unless fallback is explicitly enabled.
+
+Configuration precedence is: function arguments, active context, project
+`post_visual.toml`, then package defaults. `scripts/test-wsl.sh` verifies MathText, PNG,
+vector PDF, hybrid PDF, tests, and examples in the locked micromamba environment.
+`scripts/test-latex-wsl.sh` temporarily prepends the stable TeX Live path and verifies
+real PNG/PDF diagnostics, two dedicated tests, and one strict-`usetex` PNG for each of
+the 8 `plots/` and 5 `recipes/` modules. The validated snapshot is recorded in
+`docs/setup/latex-test-environment.md`.
 
 ## Style Baseline From `sci_plot.m`
 
@@ -132,11 +184,9 @@ Core dependencies should stay lightweight:
 ```toml
 dependencies = [
   "numpy",
-  "pandas",
   "scipy",
-  "matplotlib",
-  "seaborn",
-  "scikit-learn",
+  "matplotlib>=3.7",
+  "tomli>=2; python_version < '3.11'",
 ]
 ```
 
@@ -144,11 +194,12 @@ Optional extras:
 
 ```toml
 [project.optional-dependencies]
+dataframe = ["pandas"]
 signal = ["mne"]
 image = ["scikit-image", "nibabel", "pydicom"]
 explain = ["captum", "shap"]
 embedding = ["umap-learn"]
-dev = ["pytest", "pytest-mpl", "ruff"]
+dev = ["pandas", "pytest", "pytest-mpl", "ruff"]
 ```
 
 ## Implementation Phases
@@ -156,14 +207,18 @@ dev = ["pytest", "pytest-mpl", "ruff"]
 1. Done: build style layer, export helpers, and line plot MVP.
 2. Done: add scatter and grouped-bar primitives.
 3. Done: add distributions and heatmaps.
-4. Done: add confusion matrix, ROC/PR, and training curves.
+4. Done: add confusion matrix and training curves; ROC/PR were later removed from the public surface.
 5. Done: add ablation, model comparison, and calibration recipes.
 6. Done: add embedding and feature-importance recipes.
 7. Done: connectivity-matrix recipe as a thin heatmap specialization.
 8. Done: close primitive gaps with bars, intervals, annotations, continuous grid colors, image grids, and multi-panel layouts.
 9. Done: add point ranges, KDE/ECDF/strip views, Line/Scatter confidence support, and axes helpers.
 10. Done: slim `feature_importance` and `model_comparison` onto shared bar primitives; keep connectivity as a heatmap specialization.
-11. Next: implement signal traces and spectrograms as thin recipes when requested.
-12. Deferred: swarm collision layout, broken axes, attention maps, kernels, activations, and broader optional integrations.
+11. Done: rendering configuration, MathText/optional `usetex` contexts, LaTeX diagnostics, CLI, and PNG/PDF-only export policy.
+12. Done: vector/hybrid PDF export with per-artist rasterization, guaranteed state restoration, and file-size/structure checks.
+13. Done: project `post_visual.toml`, `post-visual configure`, and strict external-LaTeX verification.
+14. Done: migrate the workspace into WSL with isolated micromamba Python and user-owned TeX Live, then restore all verification baselines.
+15. Deferred until requested: signal traces, spectrograms, swarm collision layout, broken axes, attention maps, kernels, activations, and broader optional integrations.
 
 The layering decision is recorded in `docs/decisions/0002-primitives-before-recipes.md`; the completed core boundary and deliberate deferrals are recorded in `docs/decisions/0003-general-core-closure.md`.
+The native WSL runtime decision is recorded in `docs/decisions/0005-native-wsl-micromamba-texlive.md`; Decision 0004 remains historical.

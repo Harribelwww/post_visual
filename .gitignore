@@ -1,7 +1,12 @@
 __pycache__/
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
 *.egg-info/
 build/
 dist/
 examples/out/
-
+artifacts/

@@ -13,19 +13,22 @@ authors = [
 ]
 dependencies = [
   "numpy",
-  "pandas",
   "scipy",
-  "matplotlib",
-  "seaborn",
-  "scikit-learn"
+  "matplotlib>=3.7",
+  "tomli>=2; python_version < '3.11'"
 ]
 
+[project.scripts]
+post-visual = "post_visual.cli:main"
+
 [project.optional-dependencies]
+dataframe = ["pandas"]
+
 signal = ["mne"]
 image = ["scikit-image", "nibabel", "pydicom"]
 explain = ["captum", "shap"]
 embedding = ["umap-learn"]
-dev = ["pytest", "pytest-mpl", "ruff"]
+dev = ["pandas", "pytest", "pytest-mpl", "ruff"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -34,4 +37,3 @@ where = ["src"]
 pythonpath = ["src"]
 testpaths = ["tests"]
 addopts = "-ra"
-

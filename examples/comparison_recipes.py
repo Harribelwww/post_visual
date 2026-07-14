@@ -61,13 +61,15 @@ def main() -> list[Path]:
     )
     ablation_path = pv.save_figure(fig, output_dir / "ablation_mvp.png")
 
-    y_true = np.array([0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0])
-    proposed = np.array([0.04, 0.12, 0.23, 0.38, 0.58, 0.66, 0.74, 0.84, 0.93, 0.31, 0.79, 0.18])
-    baseline = np.array([0.02, 0.06, 0.62, 0.71, 0.76, 0.83, 0.91, 0.96, 0.99, 0.54, 0.88, 0.45])
+    rng = np.random.default_rng(42)
+    latent_probability = rng.uniform(0.03, 0.97, 300)
+    y_true = rng.binomial(1, latent_probability)
+    proposed = np.clip(latent_probability + rng.normal(0.0, 0.06, latent_probability.size), 0, 1)
+    baseline = np.clip(0.5 + 1.35 * (latent_probability - 0.5), 0, 1)
     fig, ax = pv.calibration_curve(
         y_true,
         {"Proposed": proposed, "Baseline": baseline},
-        n_bins=5,
+        n_bins=8,
         title="Reliability Diagram",
         palette="furina",
     )

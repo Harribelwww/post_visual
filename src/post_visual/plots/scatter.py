@@ -150,15 +150,15 @@ def _draw_scatter(
     for index, item in enumerate(series):
         color = colors[index]
         marker_value = marker if markers is None else markers[index % len(markers)]
-        plot_ax.scatter(
-            item.x,
-            item.y,
-            s=item.size,
-            label=item.label,
-            facecolors="white",
-            edgecolors=color,
-            **{**base_scatter_kws, "marker": marker_value},
-        )
+        point_kws = {
+            "s": item.size,
+            "label": item.label,
+            "facecolors": "white",
+            "edgecolors": color,
+            "marker": marker_value,
+            **base_scatter_kws,
+        }
+        plot_ax.scatter(item.x, item.y, **point_kws)
         if fit_line:
             _draw_fit_line(
                 plot_ax,
@@ -223,8 +223,19 @@ def _normalize_dataframe(
         return [_make_series(data[x], data[y], size=size_values, label=label)]
 
     result = []
-    for key, frame in data.groupby(hue, sort=False):
-        size_values = frame[size] if isinstance(size, str) else size
+    size_array = None
+    if size is not None and not isinstance(size, str) and not np.isscalar(size):
+        size_array = np.ravel(np.asarray(size, dtype=float))
+        if size_array.size != len(data):
+            raise ValueError("size must be scalar or have the same length as the DataFrame.")
+    grouped = data.groupby(hue, sort=False)
+    for key, frame in grouped:
+        if isinstance(size, str):
+            size_values = frame[size]
+        elif size_array is not None:
+            size_values = size_array[grouped.indices[key]]
+        else:
+            size_values = size
         result.append(_make_series(frame[x], frame[y], size=size_values, label=str(key)))
     return result
 
@@ -299,14 +310,15 @@ def _draw_fit_line(
             residual_scale = float(np.sqrt(np.sum(residuals**2) / dof))
             standard_error = residual_scale * np.sqrt(1 / x_values.size + (x_fit - x_center) ** 2 / denominator)
             critical = float(student_t.ppf((1 + fit_ci) / 2, dof))
+            fill_kws = {"color": color, **band_kws}
             ax.fill_between(
                 x_fit,
                 y_fit - critical * standard_error,
                 y_fit + critical * standard_error,
-                color=color,
-                **band_kws,
+                **fill_kws,
             )
-    ax.plot(x_fit, y_fit, color=color, label=None, **fit_kws)
+    line_kws = {"color": color, "label": None, **fit_kws}
+    ax.plot(x_fit, y_fit, **line_kws)
 
 
 def _apply_nan_policy(
@@ -347,7 +359,7 @@ def _maybe_add_legend(
     kwargs = {
         "loc": "best",
         "frameon": True,
-        "fontsize": 13,
+        "fontsize": 9,
         "ncol": max(ceil(len(handles) / 5), 1),
     }
     if legend_kws:

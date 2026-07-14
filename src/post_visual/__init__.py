@@ -1,6 +1,6 @@
 """Scientific plotting helpers for data-science research results."""
 
-from .core.export import save_figure
+from .core.export import SUPPORTED_EXPORT_FORMATS, save_figure
 from .core.axes import format_axis, inset_axes, secondary_axis, shared_legend
 from .core.layout import label_panels, panel_grid
 from .plots.annotations import annotate_arrow, annotate_text, event_lines, event_spans, significance_bracket
@@ -19,9 +19,19 @@ from .recipes import (
     embedding,
     feature_importance,
     model_comparison,
-    pr_curve,
-    roc_curve,
     training_curves,
+)
+from .rendering import (
+    HybridConfig,
+    LatexConfig,
+    LatexDiagnostics,
+    LatexUnavailableError,
+    latex_context,
+    latex_diagnostics,
+    load_project_config,
+    resolve_latex_config,
+    select_hybrid_artists,
+    write_project_config,
 )
 from .style import (
     apply_style,
@@ -54,6 +64,7 @@ __all__ = [
     "grid_color",
     "grouped_bar",
     "horizontal_bar",
+    "HybridConfig",
     "heatmap",
     "hist",
     "image",
@@ -61,14 +72,18 @@ __all__ = [
     "interval_band",
     "inset_axes",
     "kde",
+    "LatexConfig",
+    "LatexDiagnostics",
+    "LatexUnavailableError",
+    "latex_context",
+    "latex_diagnostics",
     "line",
     "label_panels",
     "model_comparison",
+    "load_project_config",
     "plot_line",
     "panel_grid",
-    "pr_curve",
     "point_range",
-    "roc_curve",
     "save_figure",
     "scatter",
     "secondary_axis",
@@ -76,7 +91,11 @@ __all__ = [
     "shared_legend",
     "significance_bracket",
     "style_context",
+    "SUPPORTED_EXPORT_FORMATS",
+    "select_hybrid_artists",
+    "resolve_latex_config",
     "strip",
     "training_curves",
     "violin",
+    "write_project_config",
 ]

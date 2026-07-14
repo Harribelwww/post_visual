@@ -23,6 +23,7 @@ Route work to the narrowest relevant document or workflow. Keep durable document
 | Find plot priorities | `docs/architecture/plot-catalog.md` | `docs/decisions/0001-initial-toolkit-scope.md` |
 | Modify docs | `docs/INDEX.md` | `.codex/workflows/docs-hygiene.md` |
 | Modify continuity files | `AGENTS.md` | `.codex/workflows/continuity-maintenance.md` |
+| Maintain native WSL runtime | `docs/setup/wsl-native-runtime.md` | `environment.yml`, `conda-lock.yml`, `docs/decisions/0005-native-wsl-micromamba-texlive.md` |
 | End a session | `.codex/workflows/session-closure.md` | `.codex/HANDOFF.md` |
 | Add or move routes/workflows | `.codex/manifest.yaml` | `.codex/workflows/route-sync.md` |
 | Implement package code | `.codex/WORKSPACE.md` | `docs/architecture/toolkit-architecture.md` |

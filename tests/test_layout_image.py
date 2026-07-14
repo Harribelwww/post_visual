@@ -67,3 +67,9 @@ def test_image_grid_accepts_rgb_and_validates_titles() -> None:
 
     with pytest.raises(ValueError, match="titles"):
         pv.image_grid([rgb, rgb], titles=["one"])
+
+
+def test_image_grid_rejects_shared_colorbar_without_shared_limits() -> None:
+    images = [np.arange(4).reshape(2, 2), np.arange(100, 104).reshape(2, 2)]
+    with pytest.raises(ValueError, match="shared colorbar"):
+        pv.image_grid(images, shared_limits=False, colorbar="shared")

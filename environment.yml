@@ -1,0 +1,20 @@
+name: post-visual
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.12
+  - pip
+  - setuptools>=68
+  - wheel
+  - numpy
+  - scipy
+  - matplotlib-base>=3.7
+  - pandas
+  - pillow
+  - ghostscript
+  - pytest
+  - pytest-mpl
+  - ruff
+  - conda-lock

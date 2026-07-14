@@ -185,24 +185,30 @@ def _draw_grouped_bar(
             n_groups=n_groups,
         )
         if orientation == "vertical":
+            draw_kws = {
+                "width": base_width * 0.92,
+                "color": color,
+                "label": group_label,
+                **base_bar_kws,
+            }
             bars = plot_ax.bar(
                 positions,
                 group_values,
-                width=base_width * 0.92,
-                color=color,
-                label=group_label,
-                **base_bar_kws,
+                **draw_kws,
             )
             if error_values is not None:
                 plot_ax.errorbar(positions, group_values, yerr=error_values[:, group_index], **base_error_kws)
         else:
+            draw_kws = {
+                "height": base_width * 0.92,
+                "color": color,
+                "label": group_label,
+                **base_bar_kws,
+            }
             bars = plot_ax.barh(
                 positions,
                 group_values,
-                height=base_width * 0.92,
-                color=color,
-                label=group_label,
-                **base_bar_kws,
+                **draw_kws,
             )
             if error_values is not None:
                 plot_ax.errorbar(group_values, positions, xerr=error_values[:, group_index], **base_error_kws)
@@ -397,7 +403,7 @@ def _maybe_add_legend(
         "bbox_to_anchor": (1.01, 1.0),
         "borderaxespad": 0.0,
         "frameon": True,
-        "fontsize": 13,
+        "fontsize": 9,
         "ncol": max(ceil(len(handles) / 5), 1),
     }
     if legend_kws:

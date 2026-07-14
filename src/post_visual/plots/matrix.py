@@ -151,7 +151,7 @@ def _draw_heatmap(
     plot_ax.grid(False)
 
     base_imshow_kws = {
-        "aspect": "auto",
+        "aspect": "equal",
         "interpolation": "nearest",
         "cmap": cmap,
         "vmin": vmin,
@@ -326,7 +326,7 @@ def _annotate_cells(
     fmt: str,
     annot_kws: Mapping[str, Any] | None,
 ) -> None:
-    kwargs = {"ha": "center", "va": "center", "fontsize": 11}
+    kwargs = {"ha": "center", "va": "center", "fontsize": 8}
     if annot_kws:
         kwargs.update(annot_kws)
 

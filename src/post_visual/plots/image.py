@@ -87,6 +87,8 @@ def image_grid(
         raise ValueError("images must contain at least one image.")
     resolved_titles = _normalize_titles(titles, length=len(arrays))
     mode = _normalize_colorbar_mode(colorbar)
+    if mode == "shared" and not shared_limits:
+        raise ValueError("A shared colorbar requires shared_limits=True.")
     if ncols <= 0:
         raise ValueError("ncols must be positive.")
     draw_args = dict(

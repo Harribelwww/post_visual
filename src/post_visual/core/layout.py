@@ -92,7 +92,7 @@ def label_panels(
         "y": 1.04,
         "ha": "right",
         "va": "bottom",
-        "fontsize": 12,
+        "fontsize": 10,
         "fontweight": "bold",
         "transform": None,
     }

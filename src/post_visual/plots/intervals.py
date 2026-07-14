@@ -211,9 +211,13 @@ def _draw_errorbar(
         "capsize": 3,
         "elinewidth": 1.0,
         "linewidth": 1.0,
+        "xerr": xerr,
+        "yerr": yerr,
+        "label": label,
+        "color": resolved_color,
     }
     kwargs.update(errorbar_kws or {})
-    plot_ax.errorbar(x, y, xerr=xerr, yerr=yerr, label=label, color=resolved_color, **kwargs)
+    plot_ax.errorbar(x, y, **kwargs)
     _finish_axes(plot_ax, title=title, xlabel=xlabel, ylabel=ylabel)
     _maybe_add_legend(plot_ax, label=label, legend=legend, legend_kws=legend_kws)
     return fig, plot_ax
@@ -426,7 +430,7 @@ def _maybe_add_legend(
     show = legend if legend is not None else label is not None
     if not show:
         return
-    kwargs = {"loc": "best", "frameon": True, "fontsize": 11}
+    kwargs = {"loc": "best", "frameon": True, "fontsize": 9}
     kwargs.update(legend_kws or {})
     legend_obj = ax.legend(**kwargs)
     legend_obj.get_frame().set_edgecolor("black")

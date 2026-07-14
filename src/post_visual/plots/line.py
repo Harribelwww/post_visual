@@ -146,8 +146,12 @@ def _draw_line(
         hue=hue,
         label=label,
     )
-    line_series = _apply_nan_policy(line_series, nan_policy=nan_policy)
     band = _normalize_band(lower, upper, line_series=line_series, nan_policy=nan_policy)
+    line_series, band = _apply_nan_policy(
+        line_series,
+        nan_policy=nan_policy,
+        band=band,
+    )
     xscale, yscale = _resolve_scales(plot_type=plot_type, scale=scale)
     _validate_log_data(line_series, xscale=xscale, yscale=yscale)
 
@@ -157,6 +161,8 @@ def _draw_line(
     plot_ax.set_yscale(yscale)
 
     colors = resolve_colors(palette, n=len(line_series))
+    if marker is None and len(markers) == 0:
+        raise ValueError("markers must not be empty when marker is not provided.")
     base_line_kws = {
         "linewidth": 1.5,
         "linestyle": "-",
@@ -172,15 +178,17 @@ def _draw_line(
         color = colors[index]
         marker_value = marker if marker is not None else markers[index % len(markers)]
         plot_kws = {
-            **base_line_kws,
             "color": color,
             "marker": marker_value,
             "markeredgecolor": color,
+            "label": item.label,
+            **base_line_kws,
         }
         if band is not None and index == 0:
             lower_values, upper_values = band
-            plot_ax.fill_between(item.x, lower_values, upper_values, color=color, **base_band_kws)
-        plot_ax.plot(item.x, item.y, label=item.label, **plot_kws)
+            fill_kws = {"color": color, **base_band_kws}
+            plot_ax.fill_between(item.x, lower_values, upper_values, **fill_kws)
+        plot_ax.plot(item.x, item.y, **plot_kws)
 
     plot_ax.margins(x=0.05, y=0.05)
 
@@ -348,23 +356,39 @@ def _validate_positive_values(line_series: Sequence[_LineSeries], *, axis: str) 
 
 
 def _apply_nan_policy(
-    line_series: Sequence[_LineSeries], *, nan_policy: str
-) -> list[_LineSeries]:
+    line_series: Sequence[_LineSeries],
+    *,
+    nan_policy: str,
+    band: tuple[np.ndarray, np.ndarray] | None,
+) -> tuple[list[_LineSeries], tuple[np.ndarray, np.ndarray] | None]:
     key = nan_policy.strip().lower()
     if key not in {"gap", "omit", "raise"}:
         raise ValueError("nan_policy must be 'gap', 'omit', or 'raise'.")
     result = []
-    for item in line_series:
+    resolved_band = band
+    for index, item in enumerate(line_series):
         finite = np.isfinite(item.x) & np.isfinite(item.y)
+        if band is not None and index == 0:
+            lower_values, upper_values = band
+            finite &= np.isfinite(lower_values) & np.isfinite(upper_values)
         if key == "raise" and not np.all(finite):
-            raise ValueError("line data contains non-finite values with nan_policy='raise'.")
+            raise ValueError("line or band data contains non-finite values with nan_policy='raise'.")
         if key == "omit":
             if not np.any(finite):
                 raise ValueError("line data must retain at least one finite point after omission.")
             result.append(_LineSeries(x=item.x[finite], y=item.y[finite], label=item.label))
+            if band is not None and index == 0:
+                resolved_band = (lower_values[finite], upper_values[finite])
+        elif key == "gap" and band is not None and index == 0:
+            resolved_lower = lower_values.astype(float, copy=True)
+            resolved_upper = upper_values.astype(float, copy=True)
+            resolved_lower[~finite] = np.nan
+            resolved_upper[~finite] = np.nan
+            resolved_band = (resolved_lower, resolved_upper)
+            result.append(item)
         else:
             result.append(item)
-    return result
+    return result, resolved_band
 
 
 def _normalize_band(
@@ -411,7 +435,7 @@ def _maybe_add_legend(
     kwargs = {
         "loc": "best",
         "frameon": True,
-        "fontsize": 13,
+        "fontsize": 9,
         "ncol": max(ceil(len(handles) / 5), 1),
     }
     if legend_kws:
